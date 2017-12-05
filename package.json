@@ -5,7 +5,7 @@
     "bufferpack": "*",
     "date-format-lite": "0.5.x",
     "dotenv": "^4.0.0",
-    "express": "3.x",
+    "express": "4.x",
     "googleapis": "^1.1.1",
     "html-encoder-decoder": "*",
     "ical": "*",
