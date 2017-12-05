@@ -18,6 +18,7 @@ var spotifyApi = new SpotifyWebApi({
 });
 
 var access_token = 'BQAUWc52D_4nKJPXBFd9FQaayC_ZYSN2amoMDKFn_DnQYce0o1dy6sP8WRkPRCN0GbzbrmPd2h9sFgFwcpg';
+var refresh_token = process.env.SPOTIFY_REFRESH;
 
 router.all('/', function(req, res){
 	var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
@@ -27,6 +28,7 @@ router.all('/', function(req, res){
 
 	// res.send({url: authorizeURL})
 	res.render('spotify', {url: authorizeURL});
+  spotifyApi.setRefreshToken(refresh_token);
   spotifyApi.getMyRecentlyPlayedTracks(null, function(err, response){
     console.log('err', err);
     if(err && err.statusCode == '401'){
@@ -53,6 +55,7 @@ router.all('/callback', function(req, res){
       console.log('The token expires in ' + data.body['expires_in']);
       console.log('The access token is ' + data.body['access_token']);
       console.log('The refresh token is ' + data.body['refresh_token']);
+      refresh_token = data.body['refresh_token'];
 
       // Set the access token on the API object to use it in later calls
       spotifyApi.setAccessToken(data.body['access_token']);
