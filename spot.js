@@ -84,6 +84,11 @@ function getTracks() {
     var nowPlayingText = '{g}Now Playing: ' + data[0].track.artists[0].name + " - " + data[0].track.name + PADDING;
     var lastPlayedText = '{o}Last Played: ' + data[1].track.artists[0].name + " - " + data[1].track.name + PADDING;
     var doublePrevText = '{r}Double Prev: ' + data[2].track.artists[0].name + " - " + data[2].track.name + PADDING;
+
+    request.get('/peggy/write?board=1&x=1&y=9&text=' + encodeURIComponent(nowPlayingText))
+    request.get('/peggy/write?board=1&x=1&y=10&text=' + encodeURIComponent(lastPlayedText))
+    request.get('/peggy/write?board=1&x=1&y=11&text=' + encodeURIComponent(doublePrevText))
+
   });
 }
 
