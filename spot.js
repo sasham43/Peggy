@@ -19,6 +19,7 @@ var spotifyApi = new SpotifyWebApi({
 
 var access_token = 'BQAUWc52D_4nKJPXBFd9FQaayC_ZYSN2amoMDKFn_DnQYce0o1dy6sP8WRkPRCN0GbzbrmPd2h9sFgFwcpg';
 var refresh_token = process.env.SPOTIFY_REFRESH;
+var PADDING = '                                                              ';
 
 router.all('/', function(req, res){
 	var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
@@ -39,6 +40,7 @@ router.all('/', function(req, res){
 
           // Save the access token so that it's used in future calls
           spotifyApi.setAccessToken(data.body['access_token']);
+          getTracks();
         }, function(err) {
           console.log('Could not refresh access token', err);
         });
@@ -61,20 +63,29 @@ router.all('/callback', function(req, res){
       spotifyApi.setAccessToken(data.body['access_token']);
       spotifyApi.setRefreshToken(data.body['refresh_token']);
 
-      spotifyApi.getMyRecentlyPlayedTracks(null, function(err, response){
-        console.log('err', err);
-        console.log('response:', response.body.items);
-        response.body.items.forEach(function(data){
-          var now_playing = data.track.artists[0].name + ' - ' + data.track.name;
-          console.log('now playing:', now_playing);
-        })
-      });
+      getTracks();
     }, function(err) {
       console.log('Something went wrong!', err);
     });
   res.render('spotify', {});
 })
 
+function getTracks() {
+  spotifyApi.getMyRecentlyPlayedTracks(null, function(err, response){
+    console.log('err', err);
+    // console.log('response:', response.body.items);
+    response.body.items.forEach(function(data, i){
+      var now_playing = data.track.artists[0].name + ' - ' + data.track.name;
+      console.log('now playing:', i, now_playing);
+    });
+    var data = response.body.items;
+
+    // do stuff
+    var nowPlayingText = '{g}Now Playing: ' + data[0].track.artists[0].name + " - " + data[0].track.name + PADDING;
+    var lastPlayedText = '{o}Last Played: ' + data[1].track.artists[0].name + " - " + data[1].track.name + PADDING;
+    var doublePrevText = '{r}Double Prev: ' + data[2].track.artists[0].name + " - " + data[2].track.name + PADDING;
+  });
+}
 
 
 // var options = {};
