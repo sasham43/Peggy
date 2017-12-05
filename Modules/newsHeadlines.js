@@ -10,7 +10,7 @@ var clearedLines = 0;
 function update() {
     writtenLines = 0;
     var titleText = ('{r}TOP STORIES: ' + newsFeeds[currentFeedIndex].name + pad).substring(0, pad.length);
-    
+
     setTimeout(function(){
         // display title
         var options = {
@@ -25,7 +25,7 @@ function update() {
             getNewsFeed();
         });
     },100)
-    
+
 }
 
 function getNewsFeed() {
@@ -34,7 +34,7 @@ function getNewsFeed() {
     };
 
     request(opts, function (err, resp, body) {
-        
+
         // Headlines are all between <title> tags.
         news = JSON.parse(body);
         setTimeout(writeNewsLine, 100);
@@ -63,7 +63,7 @@ function writeNewsLine(){
                 setTimeout(function() {
                     writeNewsLine();
                 }, 100);
-            } 
+            }
         }).on('error', function (e) {
             console.log("Got error: " + e.message);
         });
@@ -74,7 +74,7 @@ function writeNewsLine(){
         }, 100);
     }
 
-    
+
 }
 
 var newsFeeds = [{

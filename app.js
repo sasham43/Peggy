@@ -20,13 +20,13 @@ var request = require('request');
 api.set('view engine', 'jade');
 api.use(express.static('public'));
 
-board.connect();
+// board.connect();
 
 // reset the board
-board.turnOn();
-for (var i = 5; i >= 0; i--) {
-	board.clear(i);
-};
+// board.turnOn();
+// for (var i = 5; i >= 0; i--) {
+// 	board.clear(i);
+// };
 
 // API
 api.all('/peggy/write', function (req, res) {
@@ -64,6 +64,34 @@ api.all('/peggy/write', function (req, res) {
 
 api.all('/peggy/dev', function(req, res) {
 	res.render('dev', {});
+});
+
+api.all('/pegg/spot', function(req, res){
+	res.render('spotify', {});
+});
+
+require('dotenv').config();
+var SpotifyWebApi = require('spotify-web-api-node');
+
+var scopes = ['user-read-private', 'user-read-email', 'user-library-read', 'user-top-read', 'user-read-recently-played', 'user-read-currently-playing', 'user-modify-playback-state', 'user-read-playback-state'],
+    redirectUri = 'https://example.com/callback',
+    clientId = process.env.SPOTIFY_ID,
+    state = 'some-state-of-my-choice';
+
+// Setting credentials can be done in the wrapper's constructor, or using the API object's setters.
+var spotifyApi = new SpotifyWebApi({
+  redirectUri : redirectUri,
+  clientId : clientId
+});
+
+api.all('/spotify/auth', function(req, res){
+	// Create the authorization URL
+	var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+
+	// https://accounts.spotify.com:443/authorize?client_id=5fe01282e44241328a84e7c5cc169165&response_type=code&redirect_uri=https://example.com/callback&scope=user-read-private%20user-read-email&state=some-state-of-my-choice
+	console.log(authorizeURL);
+
+	res.send({url: authorizeURL})
 });
 
 api.all('/peggy/boardhtml', function(req, res) {
