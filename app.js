@@ -66,9 +66,6 @@ api.all('/peggy/dev', function(req, res) {
 	res.render('dev', {});
 });
 
-api.all('/pegg/spot', function(req, res){
-	res.render('spotify', {});
-});
 
 require('dotenv').config();
 var SpotifyWebApi = require('spotify-web-api-node');
@@ -84,15 +81,26 @@ var spotifyApi = new SpotifyWebApi({
   clientId : clientId
 });
 
-api.all('/spotify/auth', function(req, res){
-	// Create the authorization URL
+api.all('/pegg/spot', function(req, res){
 	var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
 
 	// https://accounts.spotify.com:443/authorize?client_id=5fe01282e44241328a84e7c5cc169165&response_type=code&redirect_uri=https://example.com/callback&scope=user-read-private%20user-read-email&state=some-state-of-my-choice
 	console.log(authorizeURL);
 
-	res.send({url: authorizeURL})
+	// res.send({url: authorizeURL})
+	res.render('spotify', {url: authorizeURL});
 });
+
+
+// api.all('/spotify/auth', function(req, res){
+// 	// Create the authorization URL
+// 	var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+//
+// 	// https://accounts.spotify.com:443/authorize?client_id=5fe01282e44241328a84e7c5cc169165&response_type=code&redirect_uri=https://example.com/callback&scope=user-read-private%20user-read-email&state=some-state-of-my-choice
+// 	console.log(authorizeURL);
+//
+// 	res.send({url: authorizeURL})
+// });
 
 api.all('/peggy/boardhtml', function(req, res) {
 	var boardNumber = parseInt(req.query.board);
