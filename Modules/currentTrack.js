@@ -28,9 +28,13 @@ spotify.refreshAccessToken().then(function(response){
     getRecentlyPlayed()
 }).catch(function(err){
     console.log('err:', err);
-});;
+});
 
-function getRecentlyPlayed(){
+// getRecentlyPlayed();
+
+setInterval(getRecentlyPlayed, 10000);
+
+function getRecentlyPlayed() {
     spotify.getMyCurrentPlayingTrack().then(function(response){
         // console.log('response:', response);
         var track = response.body.item.name;
@@ -43,16 +47,21 @@ function getRecentlyPlayed(){
         if(tracks.length > 3){
             tracks.pop();
         }
+    }).catch(function(err){
+        console.log('err:', err);
+        if(err.statusCode == 401){
+            refreshToken();
+        }
     });
+}
 
+function refreshToken() {
+    spotify.refreshAccessToken().then(function(response){
+        console.log('new token:', response.body.access_token);
+        access_token = response.body.access_token;
+        spotify.setAccessToken(access_token);
 
-    return;
-    spotify.getMyRecentlyPlayedTracks().then(function(response){
-        // console.log('response:', response.body.items);
-        tracks = response.body.items;
-        tracks.forEach(function(item, index){
-            console.log(index, item.track.name, item.track.artists[0].name)
-        })
+        // getRecentlyPlayed()
     }).catch(function(err){
         console.log('err:', err);
     });
