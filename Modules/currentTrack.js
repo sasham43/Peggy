@@ -15,6 +15,7 @@ var spotify = new Spotify({
 var refresh_token = fs.readFileSync(path.join(__dirname, '../token.txt'), 'utf-8').trim();
 // var refresh_token = 'AQDtK-bRlhqdxVHIbp5CSM_z5K14_CXsOkLOKx0bxaTTAiisOlmYjW9_mQrei35TZr9XgRWdC4XPudMXkFTHY9QpYHvbJ2oUnojqY2tJVzB7rXppwEzZyaCM2JSob9gXWSw'
 var access_token;
+var tracks = [];
 
 console.log('token:', refresh_token);
 
@@ -30,8 +31,28 @@ spotify.refreshAccessToken().then(function(response){
 });;
 
 function getRecentlyPlayed(){
-    spotify.getMyRecentlyPlayedTracks().then(function(response){
+    spotify.getMyCurrentPlayingTrack().then(function(response){
         // console.log('response:', response);
+        var track = response.body.item.name;
+        var artist = response.body.item.artists[0].name;
+        console.log(track + ' - ' + artist)
+        tracks.push({
+            track: track,
+            artist: artist
+        });
+        if(tracks.length > 3){
+            tracks.pop();
+        }
+    });
+
+
+    return;
+    spotify.getMyRecentlyPlayedTracks().then(function(response){
+        // console.log('response:', response.body.items);
+        tracks = response.body.items;
+        tracks.forEach(function(item, index){
+            console.log(index, item.track.name, item.track.artists[0].name)
+        })
     }).catch(function(err){
         console.log('err:', err);
     });
